@@ -11,11 +11,10 @@ import com.zaxxer.hikari.HikariDataSource;
 
 public class DBConnect {
 
-	private static String jdbcURL = "jdbc:mysql://localhost/porto2015";
-	private static HikariDataSource ds;
+	private static  String jdbcURL = "jdbc:mysql://localhost/porto2015";
+	private  static HikariDataSource ds;
 
 	public static Connection getConnection() {
-
 		if (ds == null) {
 			HikariConfig config = new HikariConfig();
 			config.setJdbcUrl(jdbcURL);

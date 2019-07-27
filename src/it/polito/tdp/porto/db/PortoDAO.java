@@ -6,9 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import it.polito.tdp.porto.model.Author;
 import it.polito.tdp.porto.model.Paper;
+import it.polito.tdp.porto.model.Pubblication;
 
 public class PortoDAO {
 
@@ -67,26 +70,53 @@ public class PortoDAO {
 		}
 	}
 	
-	
+	public List<Pubblication> getc(int id){
+		final String sql = "select creator.`eprintid` from creator \n" + 
+				"inner join author on creator.authorid = author.id\n" + 
+				"where author.id = ?";
+		List<Pubblication> mtemp = new LinkedList<Pubblication>();
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, id);
+			int eprintid = 0;
+			ResultSet rs = st.executeQuery();
+			while(rs.next()) {
+				eprintid = rs.getInt("eprintid");
+				mtemp.add(new Pubblication(id, eprintid));
+			}
+			conn.close();
+			return mtemp;
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Errore Db");
+		}
+	}
 	
 	public boolean getCoautori(int id1, int id2) {
-		final String sql1 = "SELECT COUNT(*) AS conto FROM creator WHERE authorid=? OR authorid=? group by eprintid;";
-		final String sql = "select * from creator where authorid=719";
+		final String sql = "SELECT COUNT(*) AS conto FROM creator WHERE authorid=? OR authorid=? group by eprintid;";
+		final String sql1 = "select * from creator where authorid=719";
 		try {
 			Connection conn = DBConnect.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
 			st.setInt(1, id1);
 			st.setInt(2, id2);
+			
+			boolean coautori = false;
 
 			ResultSet rs = st.executeQuery();
 			while(rs.next()) {
-				if(rs.getInt("conto")>1)
-					return true;
+				if(rs.getInt("conto")>1) {
+					coautori = true;
+					break;
+				}
 			}
-			return false;
+			conn.close();
+			return coautori;
 		}
 		catch (SQLException e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 			throw new RuntimeException("Errore Db");
 		}
 	}
