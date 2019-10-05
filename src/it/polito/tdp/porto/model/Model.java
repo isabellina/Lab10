@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultUndirectedGraph;
 import org.jgrapht.graph.SimpleGraph;
@@ -49,6 +51,7 @@ public class Model {
 			}
 		}
 		this.pubblications = pubblications;
+		System.out.println("finisco di prendere le pubblications");
 	}
 	
 	public List<Pubblication> getAuthorPubblications(int authorid){
@@ -60,33 +63,49 @@ public class Model {
 		}
 		return temp;
 	}
-	public void creaGrafo() {
-		 for(Object a: this.grafo.vertexSet()) {
-			 for(Object b: this.grafo.vertexSet()) {
-				 if(!a.equals(b)) {
-					 Author a1 = (Author) a;
-					 Author b1 = (Author) b;
-					 boolean coautori = false;
-					 for(Pubblication p: this.getAuthorPubblications(a1.getId())) {
-						 if(coautori == true) {
-							 break;
-						 }
-						 for(Pubblication p1: this.getAuthorPubblications(b1.getId())) {
-							 if(coautori == true) {
-								 break;
-							 }
-							 if(p.getEprintid() == p1.getEprintid()) {
-								 coautori = true;
-							 }
-						 }
-					 }
-					 if(coautori) {
-						 this.grafo.addEdge(a1, b1);	 
-					 }
-				 }
-			 }
-		 }
-		 
+//	public void creaGrafo() {
+//		 for(Object a: this.grafo.vertexSet()) {
+//			 for(Object b: this.grafo.vertexSet()) {
+//				 if(!a.equals(b)) {
+//					 Author a1 = (Author) a;
+//					 Author b1 = (Author) b;
+//					 boolean coautori = false;
+//					 for(Pubblication p: this.getAuthorPubblications(a1.getId())) {
+//						 if(coautori == true) {
+//							 break;
+//						 }
+//						 for(Pubblication p1: this.getAuthorPubblications(b1.getId())) {
+//							 if(coautori == true) {
+//								 break;
+//							 }
+//							 if(p.getEprintid() == p1.getEprintid()) {
+//								 coautori = true;
+//							 }
+//						 }
+//					 }
+//					 if(coautori) {
+//						 this.grafo.addEdge(a1, b1);	 
+//					 }
+//				 }
+//			 }
+//		 }
+//		 
+//	}
+	
+	public void creaGrafo()
+	{
+		for(Object a : this.grafo.vertexSet()) {
+			for(Author b : this.portoDAO.getCoauthors((Author) a)) {
+				this.grafo.addEdge(a, b);
+			}
+		}
+	}
+	
+	public List<Author> getNoCoautori(Author a){
+		List<Author> ltemp = new LinkedList<Author>();
+		ltemp = this.portoDAO.getAutore();
+		ltemp.removeAll(this.portoDAO.getCoauthors(a));
+		return ltemp;
 	}
 	
 	public String getCoautori(Author a) {
@@ -99,4 +118,14 @@ public class Model {
 		}
 		return s;
 	}
+	
+	public String getPercorso(Author a1, Author a2) {
+		String s ="";
+		DijkstraShortestPath path = new DijkstraShortestPath(this.grafo);
+		
+		GraphPath gp = path.getPath(a1, a2);
+		
+		return gp.toString();
+		}
+	
 }

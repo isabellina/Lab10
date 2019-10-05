@@ -148,4 +148,79 @@ public class PortoDAO {
 			throw new RuntimeException("Errore Db");
 		}
 	}
+	
+	public void createTmpTable() {
+		final String sql = "create table eprintids(eprintid tinytext) ";
+		
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			int rs = st.executeUpdate();
+			conn.close();
+		}catch(SQLException e) {
+			 e.printStackTrace();
+				throw new RuntimeException("Errore Db");
+		}
+	}
+	
+	public void InsertIntoTmpTable(Author a) {
+		final String sql = "insert into eprintids select eprintid from creator where authorid = ?;";
+		
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, a.getId());
+			int rs = st.executeUpdate();
+			conn.close();
+		}catch(SQLException e) {
+			 e.printStackTrace();
+				throw new RuntimeException("Errore Db");
+		}
+	}
+	
+	public void dropTmpTable() {
+		final String sql = "drop table if exists eprintids;";
+		
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			int rs = st.executeUpdate();
+			conn.close();
+		}catch(SQLException e) {
+			 e.printStackTrace();
+				throw new RuntimeException("Errore Db");
+		}
+	}
+	
+	public List<Author> getCoauthors(Author a)
+	{
+		List<Author> ltemp = new LinkedList<Author>();
+		
+		this.dropTmpTable();
+		this.createTmpTable();
+		this.InsertIntoTmpTable(a);
+	
+		final String sql = "select distinct authorid from creator inner join eprintids on eprintids.eprintid = creator.eprintid where creator.authorid != ?;" ;
+	
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, a.getId());
+			ResultSet rs = st.executeQuery();
+			
+			
+	      while(rs.next()) {
+	    	  ltemp.add(new Author(rs.getInt("authorid"), "", ""));
+	      }
+	      conn.close();
+	      
+	}
+		catch (SQLException e) {
+			 e.printStackTrace();
+			throw new RuntimeException("Errore Db");
+		}
+	
+		return ltemp;
+		
+	}
 }

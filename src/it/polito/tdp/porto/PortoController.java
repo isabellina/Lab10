@@ -26,7 +26,7 @@ public class PortoController {
     private ComboBox<Author> boxPrimo;
 
     @FXML
-    private ComboBox<?> boxSecondo;
+    private ComboBox<Author> boxSecondo;
 
     @FXML
     private TextArea txtResult;
@@ -59,5 +59,8 @@ public class PortoController {
     	ObservableList<Author> listaAutori = FXCollections.observableList(model.getAutori());
         boxPrimo.setItems(listaAutori);
         boxPrimo.setValue(listaAutori.get(0));
+    	ObservableList<Author> listaNoCoautore = FXCollections.observableList(model.getNoCoautori(boxPrimo.getValue()));
+        boxSecondo.setItems(listaNoCoautore);
+        boxSecondo.setValue(listaNoCoautore.get(0));
     }
 }
