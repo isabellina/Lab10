@@ -11,8 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="it.polito.tdp.porto.PortoController">
+<BorderPane xmlns="http://javafx.com/javafx/8.0.211" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polito.tdp.porto.PortoController">
    <top>
       <Label text="Laboratorio 10 - Porto" BorderPane.alignment="CENTER">
          <BorderPane.margin>

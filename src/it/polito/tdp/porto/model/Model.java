@@ -37,7 +37,7 @@ public class Model {
 	}
 
 	public void test() {
-		this.grafo = new SimpleGraph<>(DefaultEdge.class);
+		this.grafo = new SimpleGraph<>(MyEdge.class);
 		
 		List<Pubblication> pubblications = new LinkedList<Pubblication>();
 				
@@ -105,6 +105,7 @@ public class Model {
 		List<Author> ltemp = new LinkedList<Author>();
 		ltemp = this.portoDAO.getAutore();
 		ltemp.removeAll(this.portoDAO.getCoauthors(a));
+		ltemp.remove(a);
 		return ltemp;
 	}
 	
@@ -122,10 +123,24 @@ public class Model {
 	public String getPercorso(Author a1, Author a2) {
 		String s ="";
 		DijkstraShortestPath path = new DijkstraShortestPath(this.grafo);
-		
+	
 		GraphPath gp = path.getPath(a1, a2);
 		
-		return gp.toString();
+		String ret = "";
+		
+		for(Object edge : gp.getEdgeList()) {
+			MyEdge my = (MyEdge) edge;
+			Author ai = (Author) my.getSource();
+			Author af = (Author) my.getTarget();
+			ret += this.portoDAO.getArticoloComune(ai, af) + "\n";
 		}
+		
+		return ret;
+		} 
+	
+	
+	
+	
+	
 	
 }

@@ -223,4 +223,30 @@ public class PortoDAO {
 		return ltemp;
 		
 	}
+	
+	public String getArticoloComune(Author a1, Author a2) {
+		this.dropTmpTable();
+		this.createTmpTable();
+		this.InsertIntoTmpTable(a1);
+		final String sql = "select paper.title from paper where paper.eprintid=(select creator.eprintid from creator inner join eprintids on eprintids.eprintid=creator.eprintid where creator.authorid=? limit 1); ";
+	   try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, a2.getId());
+			ResultSet rs = st.executeQuery();
+			if(rs.next()) {
+				return rs.getString("title");
+			}
+			conn.close();
+			
+	   }
+	   catch (SQLException e) {
+		   e.printStackTrace();
+	   }
+	   
+	   return "";
+	}
+	
+	
+	
 }

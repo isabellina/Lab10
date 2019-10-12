@@ -34,12 +34,17 @@ public class PortoController {
     @FXML
     void handleCoautori(ActionEvent event) {
           Author a = boxPrimo.getValue();
+          txtResult.clear();
           txtResult.appendText(model.getCoautori(a));
     }
 
     @FXML
     void handleSequenza(ActionEvent event) {
-
+      Author a1 = boxPrimo.getValue();
+      Author a2 = boxSecondo.getValue();
+      String s = model.getPercorso(a1, a2);
+      txtResult.clear();
+      txtResult.appendText(s);
     }
 
     @FXML
