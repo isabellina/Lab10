@@ -8,6 +8,7 @@ import java.util.TreeMap;
 
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
+import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultUndirectedGraph;
@@ -63,34 +64,6 @@ public class Model {
 		}
 		return temp;
 	}
-//	public void creaGrafo() {
-//		 for(Object a: this.grafo.vertexSet()) {
-//			 for(Object b: this.grafo.vertexSet()) {
-//				 if(!a.equals(b)) {
-//					 Author a1 = (Author) a;
-//					 Author b1 = (Author) b;
-//					 boolean coautori = false;
-//					 for(Pubblication p: this.getAuthorPubblications(a1.getId())) {
-//						 if(coautori == true) {
-//							 break;
-//						 }
-//						 for(Pubblication p1: this.getAuthorPubblications(b1.getId())) {
-//							 if(coautori == true) {
-//								 break;
-//							 }
-//							 if(p.getEprintid() == p1.getEprintid()) {
-//								 coautori = true;
-//							 }
-//						 }
-//					 }
-//					 if(coautori) {
-//						 this.grafo.addEdge(a1, b1);	 
-//					 }
-//				 }
-//			 }
-//		 }
-//		 
-//	}
 	
 	public void creaGrafo()
 	{
@@ -122,12 +95,11 @@ public class Model {
 	
 	public String getPercorso(Author a1, Author a2) {
 		String s ="";
-		DijkstraShortestPath path = new DijkstraShortestPath(this.grafo);
+		ShortestPathAlgorithm<Author, MyEdge> path = new DijkstraShortestPath<Author, MyEdge>(this.grafo);
 	
-		GraphPath gp = path.getPath(a1, a2);
+		GraphPath<Author, MyEdge> gp = path.getPath(a1, a2);
 		
 		String ret = "";
-		
 		for(Object edge : gp.getEdgeList()) {
 			MyEdge my = (MyEdge) edge;
 			Author ai = (Author) my.getSource();
